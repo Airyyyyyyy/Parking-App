@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ParkFinder NG – Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --navy: #0f2b3d; --accent: #ff8c42;
+            --accent-grad: linear-gradient(95deg, #ff9a3c 0%, #ff6d2c 100%);
+            --ink: #1e293b; --muted: #64748b; --line: #e6ecf3; --bg-soft: #f1f5fa;
+        }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg-soft);
+            color: var(--ink); line-height: 1.5; min-height: 100vh; }
+        a { text-decoration: none; color: inherit; }
+
+        .navbar { background: #fff; border-bottom: 1px solid var(--line);
+            box-shadow: 0 4px 14px rgba(15,43,61,.04); position: sticky; top: 0; z-index: 100; }
+        .navbar .container { width: 100%; margin: 0 auto; padding: 0 2.5rem;
+            display: flex; align-items: center; justify-content: space-between; height: 70px; }
+        .logo { font-size: 2rem; font-weight: 800; color: var(--navy);
+            display: flex; align-items: center; gap: 10px; }
+        .logo i { color: var(--accent); }
+        .nav-links { display: flex; gap: .6rem; align-items: center; }
+        .nav-link { color: #46586c; font-weight: 600; font-size: 1.25rem;
+            padding: .5rem 1.2rem; border-radius: 40px; display: flex; align-items: center; gap: 8px; }
+        .nav-link:hover { background: #f0f4f8; color: var(--navy); }
+        .nav-btn { background: var(--accent-grad); color: #fff; font-weight: 700;
+            font-size: .85rem; padding: .5rem 1.3rem; border-radius: 40px;
+            display: flex; align-items: center; gap: 8px; }
+
+        .wrap { max-width: 100%; margin: 0 auto; padding: 2rem 2.5rem; }
+        .page-head { display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 1.6rem; flex-wrap: wrap; gap: 1rem; }
+        .page-head h1 { font-size: 1.6rem; font-weight: 800; color: var(--navy);
+            display: flex; align-items: center; gap: 10px; }
+        .page-head h1 i { color: var(--accent); }
+        .btn-primary { background: var(--accent-grad); color: #fff; font-weight: 700;
+            font-size: .88rem; padding: .7rem 1.3rem; border-radius: 14px;
+            display: inline-flex; align-items: center; gap: 8px; border: none; cursor: pointer; }
+
+        .msg { padding: .8rem 1.1rem; border-radius: 14px; margin-bottom: 1rem; font-size: .88rem;
+            font-weight: 600; }
+        .msg.success { background: #dcfce7; color: #15803d; }
+        .msg.error { background: #fee2e2; color: #b91c1c; }
+
+        .card { background: #fff; border-radius: 24px; border: 1px solid var(--line);
+            box-shadow: 0 4px 16px rgba(0,0,0,.02); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; font-size: 1.25rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: .5px; color: var(--muted); padding: 1rem 1.2rem; border-bottom: 1px solid var(--line); }
+        td { padding: 1rem 1.2rem; border-bottom: 1px solid var(--line); font-size: 1.2rem; }
+        tr:last-child td { border-bottom: none; }
+        .lot-name { font-weight: 700; color: var(--navy); }
+        .lot-addr { font-size: .9rem; color: var(--muted); margin-top: 2px; }
+        .occ-badge { font-weight: 700; padding: 3px 10px; border-radius: 40px; font-size: .78rem; }
+        .add-slots { display: flex; gap: 6px; align-items: center; }
+        .add-slots input { width: 66px; padding: .45rem .6rem; border-radius: 10px;
+            border: 1px solid var(--line); font-family: inherit; }
+        .add-slots button { background: #f8fafc; border: 1px solid var(--line); color: var(--navy);
+            font-weight: 700; font-size: .8rem; padding: .45rem .8rem; border-radius: 10px; cursor: pointer; }
+        .add-slots button:hover { background: #eef3f8; }
+        .empty-state { text-align: center; color: var(--muted); padding: 3rem 1rem; }
+        .empty-state i { font-size: 2.4rem; color: #cbd5e1; display: block; margin-bottom: .8rem; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="container">
+        <div class="logo"><i class="fas fa-square-parking"></i> ParkFinder NG <span style="font-size:1.3rem;color:var(--accent);font-weight:700;">ADMIN</span></div>
+        <div class="nav-links">
+            <a href="/parking/dashboard/" class="nav-link"><i class="fas fa-gauge"></i> Dashboard</a>
+            <a href="/analytics/trends/" class="nav-link"><i class="fas fa-chart-line"></i> Trends</a>
+            <a href="/auth/logout/" class="nav-btn"><i class="fas fa-right-from-bracket"></i> Logout</a>
+        </div>
+    </div>
+</nav>
+
+<div class="wrap">
+    <div class="page-head">
+        <h1><i class="fas fa-screwdriver-wrench"></i> Manage Parking Lots</h1>
+        <a href="{% url 'add_lot' %}" class="btn-primary"><i class="fas fa-plus"></i> Add Parking Lot</a>
+    </div>
+
+    {% for message in messages %}
+    <div class="msg {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+
+    <div class="card">
+        {% if lots %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Parking Lot</th>
+                    <th>Slots</th>
+                    <th>Available</th>
+                    <th>Occupancy</th>
+                    <th>Add Slots</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lot in lots %}
+                <tr>
+                    <td>
+                        <div class="lot-name">{{ lot.name }}</div>
+                        <div class="lot-addr">{{ lot.address }}</div>
+                    </td>
+                    <td>{{ lot.total_slots }}</td>
+                    <td>{{ lot.available }}</td>
+                    <td>
+                        {% if lot.occupancy >= 70 %}
+                        <span class="occ-badge" style="background:#fee2e2;color:#b91c1c;">{{ lot.occupancy }}%</span>
+                        {% elif lot.occupancy >= 35 %}
+                        <span class="occ-badge" style="background:#fff7ed;color:#c2410c;">{{ lot.occupancy }}%</span>
+                        {% else %}
+                        <span class="occ-badge" style="background:#dcfce7;color:#15803d;">{{ lot.occupancy }}%</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form class="add-slots" method="post" action="{% url 'add_slots' lot.id %}">
+                            {% csrf_token %}
+                            <input type="number" name="count" min="1" placeholder="e.g. 5" required>
+                            <button type="submit"><i class="fas fa-plus"></i> Add</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-square-parking"></i>
+            <h2>No parking lots yet</h2>
+            <p>Click "Add Parking Lot" to create your first lot.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+</body>
+</html>

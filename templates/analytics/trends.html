@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ParkFinder NG – Availability Trends</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --navy: #0f2b3d; --accent: #ff8c42;
+            --accent-grad: linear-gradient(95deg, #ff9a3c 0%, #ff6d2c 100%);
+            --ink: #1e293b; --muted: #64748b; --line: #e6ecf3; --bg-soft: #f1f5fa;
+        }
+        
+        body { 
+            font-family: 'Inter', system-ui, sans-serif; 
+            background: var(--bg-soft);
+            color: var(--ink); 
+            line-height: 1.5; 
+            min-height: 100vh; 
+        }
+
+        a { text-decoration: none; color: inherit; }
+
+        .navbar { background: #fff; border-bottom: 1px solid var(--line);
+            box-shadow: 0 4px 14px rgba(15,43,61,.04); position: sticky; top: 0; z-index: 100; }
+        .navbar .container { width: 100%; margin: 0 auto; padding: 0 2.5rem;
+            display: flex; align-items: center; justify-content: space-between; height: 70px; }
+        .logo { font-size: 1.7rem; font-weight: 800; color: var(--navy);
+            display: flex; align-items: center; gap: 10px; }
+        .logo i { color: var(--accent); }
+        .nav-links { display: flex; gap: .6rem; align-items: center; }
+        .nav-link { color: #46586c; font-weight: 600; font-size: 1.15rem;
+            padding: .5rem 1.2rem; border-radius: 40px; transition: all .2s;
+            display: flex; align-items: center; gap: 8px; }
+        .nav-link:hover { background: #f0f4f8; color: var(--navy); }
+        .nav-btn { background: var(--accent-grad); color: #fff; font-weight: 700;
+            font-size: .85rem; padding: .5rem 1.3rem; border-radius: 40px;
+            display: flex; align-items: center; gap: 8px; }
+
+        .wrap { max-width: 100%; margin: 0 auto; padding: 2rem 2.5rem; }
+        .page-head { margin-bottom: 1.6rem; }
+        .page-head h1 { font-size: 1.6rem; font-weight: 800; color: var(--navy);
+            display: flex; align-items: center; gap: 10px; }
+        .page-head h1 i { color: var(--accent); }
+        .page-head p { color: var(--muted); margin-top: .3rem; }
+
+        .controls { margin-bottom: 1.6rem; }
+        .lot-select { padding: .7rem 1rem; border-radius: 14px; border: 1px solid var(--line);
+            background: #fff; font-family: inherit; font-size: .9rem; font-weight: 600;
+            color: var(--navy); min-width: 260px; }
+
+        .card { background: #fff; border-radius: 24px; border: 1px solid var(--line);
+            box-shadow: 0 4px 16px rgba(0,0,0,.02); padding: 1.6rem; margin-bottom: 1.6rem; }
+        .card h2 { font-size: 1rem; font-weight: 800; color: var(--navy);
+            display: flex; align-items: center; gap: 8px; margin-bottom: .3rem; }
+        .card h2 i { color: var(--accent); }
+        .chart-note { color: var(--muted); font-size: .8rem; margin-bottom: 1rem; }
+
+        .peak-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+        .peak-item { background: #f8fafc; border: 1px solid var(--line); border-radius: 16px;
+            padding: 1rem 1.2rem; }
+        .peak-item .lbl { font-size: .7rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: .5px; color: var(--muted); }
+        .peak-item .val { font-size: 1rem; font-weight: 700; color: var(--navy); margin-top: .3rem; }
+        .peak-item.good .val { color: #16a34a; }
+        .peak-item.bad .val { color: #dc2626; }
+        .campus-note { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 14px;
+            padding: .9rem 1.1rem; color: #9a3412; font-size: .88rem; margin-top: 1rem;
+            display: flex; gap: 8px; align-items: flex-start; }
+
+        .empty-state { text-align: center; color: var(--muted); padding: 3rem 1rem; }
+        .empty-state i { font-size: 2.4rem; color: #cbd5e1; display: block; margin-bottom: .8rem; }
+
+        @media (max-width: 700px) { .peak-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="container">
+        <div class="logo"><i class="fas fa-square-parking"></i> ParkFinder NG</div>
+        <div class="nav-links">
+            <a href="/parking/dashboard/" class="nav-link"><i class="fas fa-gauge"></i> Dashboard</a>
+            <a href="/parking/search/" class="nav-link"><i class="fas fa-magnifying-glass"></i> Find Parking</a>
+            <a href="/analytics/trends/" class="nav-link"><i class="fas fa-chart-line"></i> Trends</a>
+            <a href="/auth/logout/" class="nav-btn"><i class="fas fa-right-from-bracket"></i> Logout</a>
+        </div>
+    </div>
+</nav>
+
+<div class="wrap">
+    <div class="page-head">
+        <h1><i class="fas fa-chart-line"></i> Availability Trends</h1>
+        <p>Peak hours and availability patterns based on historical occupancy data.</p>
+    </div>
+
+    {% if lots %}
+    <div class="controls">
+        <form method="get" id="lotForm">
+            <select name="lot" class="lot-select" onchange="document.getElementById('lotForm').submit()">
+                {% for lot in lots %}
+                <option value="{{ lot.id }}" {% if selected and lot.id == selected.id %}selected{% endif %}>{{ lot.name }}</option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2><i class="fas fa-clock"></i> Peak Hours — {{ selected.name }}</h2>
+        <p class="chart-note"><i class="fas fa-database"></i> Average occupancy by hour, based on 60 days of historical data (weekdays).</p>
+        <canvas id="hourlyChart" height="90"></canvas>
+    </div>
+    <script type="application/json" id="hourlyData">{{ hourly_data|safe }}</script>
+
+    <div class="card">
+        <h2><i class="fas fa-lightbulb"></i> Availability Insights</h2>
+        <div class="peak-grid">
+            <div class="peak-item good">
+                <div class="lbl">Best times to park</div>
+                <div class="val">{{ recommendations.best_str }}</div>
+            </div>
+            <div class="peak-item bad">
+                <div class="lbl">Busiest times</div>
+                <div class="val">{{ recommendations.worst_str }}</div>
+            </div>
+            <div class="peak-item">
+                <div class="lbl">Peak hour</div>
+                <div class="val">{{ recommendations.peak_hour_str }}</div>
+            </div>
+        </div>
+        <p class="campus-note"><i class="fas fa-university"></i> {{ recommendations.campus_note }}</p>
+    </div>
+    {% else %}
+    <div class="card">
+        <div class="empty-state">
+            <i class="fas fa-chart-line"></i>
+            <h2>No parking lots yet</h2>
+            <p>Run <code>python manage.py seed_data</code> to populate campus lots and trends.</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% if lots %}
+<script>
+    const hourly = JSON.parse(document.getElementById('hourlyData').textContent);
+    const labelsFormatted = hourly.labels.map(h => {
+        if (h === 0) return '12am';
+        if (h < 12) return h + 'am';
+        if (h === 12) return '12pm';
+        return (h - 12) + 'pm';
+    });
+
+    new Chart(document.getElementById('hourlyChart'), {
+        type: 'bar',
+        data: {
+            labels: labelsFormatted,
+            datasets: [{
+                label: 'Avg occupancy (%)',
+                data: hourly.values,
+                backgroundColor: hourly.colours,
+                borderRadius: 8,
+                barPercentage: 0.7,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `${ctx.raw}% occupied` } } },
+            scales: {
+                y: { min: 0, max: 100, ticks: { callback: v => v + '%' }, grid: { color: '#e9ecef' } },
+                x: { ticks: { maxRotation: 45, minRotation: 30, font: { size: 10 } } }
+            }
+        }
+    });
+</script>
+{% endif %}
+
+</body>
+</html>

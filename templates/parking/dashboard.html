@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ParkFinder NG – Driver Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --navy: #0f2b3d;
+            --navy-deep: #0b1f2e;
+            --accent: #ff8c42;
+            --accent-grad: linear-gradient(95deg, #ff9a3c 0%, #ff6d2c 100%);
+            --ink: #1e293b;
+            --muted: #64748b;
+            --line: #e6ecf3;
+            --bg-soft: #f1f5fa;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+            background: var(--bg-soft);
+            color: var(--ink);
+            font-size: 16px;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        a { text-decoration: none; color: inherit; }
+
+        /* ----- FLOATING LEFT LAYOUT: navbar + content using asymmetric grid ----- */
+        /* We want: Left side (main content) takes more space, Right side (profile card) isolated */
+        .app-wrapper {
+            max-width: 100%;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem 2.5rem 3rem 2.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar – full-width white bar across the top */
+        .navbar {
+            background: #ffffff;
+            border-bottom: 1px solid var(--line);
+            box-shadow: 0 4px 14px rgba(15, 43, 61, 0.04);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 70px;
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--navy);
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            color: var(--accent);
+            font-size: 1.3rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #46586c;
+            font-weight: 600;
+            font-size: 0.98rem;
+            padding: 0.55rem 1.2rem;
+            border-radius: 40px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-link:hover {
+            background: #f0f4f8;
+            color: var(--navy);
+        }
+
+        .nav-btn {
+            background: var(--accent-grad);
+            color: white;
+            font-weight: 700;
+            font-size: 0.92rem;
+            padding: 0.55rem 1.3rem;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .nav-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        /* DASHBOARD 2-COLUMN LAYOUT: main left (2/3) and profile right (1/3) */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.8rem;
+            align-items: stretch;
+            flex: 1;
+        }
+
+        /* LEFT COLUMN – bookings, stats, quick actions */
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1.8rem;
+        }
+
+        /* Right column – profile card alone, isolated, fully visible */
+        .right-column {
+            display: flex;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.2rem 1.2rem;
+            border: 1px solid var(--line);
+            box-shadow: 0 2px 12px rgba(15, 43, 61, 0.04);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: transform 0.1s ease;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .stat-icon.total {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .stat-icon.active {
+            background: #f0fdf4;
+            color: #16a34a;
+        }
+
+        .stat-icon.done {
+            background: #f8faff;
+            color: #6366f1;
+        }
+
+        .stat-icon.cancelled {
+            background: #fff5f5;
+            color: #dc2626;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--navy);
+            letter-spacing: -0.5px;
+            line-height: 1.1;
+        }
+
+        .stat-label {
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--muted);
+            letter-spacing: 0.4px;
+            margin-top: 0.25rem;
+        }
+
+        /* Section Card (white container) */
+        .section-card {
+            background: white;
+            border-radius: 24px;
+            border: 1px solid var(--line);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+            overflow: hidden;
+        }
+
+        /* Let this card grow to fill the remaining vertical space */
+        .section-card.fill {
+            flex: 1;
+        }
+
+        .section-head {
+            padding: 1.2rem 1.6rem;
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .section-head h3 {
+            font-size: 1.08rem;
+            font-weight: 800;
+            color: var(--navy);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-head h3 i {
+            color: var(--accent);
+        }
+
+        .section-link {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .section-link:hover {
+            color: #e65100;
+        }
+
+        /* Booking list styling */
+        .booking-list {
+            padding: 0.2rem 0;
+        }
+
+        .booking-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.6rem;
+            border-bottom: 1px solid var(--line);
+            transition: background 0.15s;
+        }
+
+        .booking-row:last-child {
+            border-bottom: none;
+        }
+
+        .booking-row:hover {
+            background: #fafcff;
+        }
+
+        .bk-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .bk-dot.confirmed {
+            background: #16a34a;
+        }
+
+        .bk-dot.completed {
+            background: #6366f1;
+        }
+
+        .bk-dot.cancelled {
+            background: #dc2626;
+        }
+
+        .bk-info {
+            flex: 1;
+        }
+
+        .bk-lot {
+            font-size: 0.98rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .bk-meta {
+            font-size: 0.82rem;
+            color: var(--muted);
+            margin-top: 3px;
+        }
+
+        .bk-badge {
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 5px 13px;
+            border-radius: 50px;
+            text-transform: capitalize;
+            flex-shrink: 0;
+        }
+
+        .bk-badge.confirmed {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .bk-badge.completed {
+            background: #ede9fe;
+            color: #5b21b6;
+        }
+
+        .bk-badge.cancelled {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .empty-state {
+            padding: 2.5rem 1.6rem;
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .empty-state i {
+            font-size: 2rem;
+            margin-bottom: 0.7rem;
+            display: block;
+            color: #cbd5e1;
+        }
+
+        /* Quick actions */
+        .quick-actions {
+            padding: 1rem 1.6rem 1.6rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .qa-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.95rem 1rem;
+            border-radius: 18px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .qa-btn i {
+            width: 20px;
+            font-size: 1rem;
+        }
+
+        .qa-btn.primary {
+            background: var(--accent-grad);
+            color: white;
+            box-shadow: 0 4px 12px rgba(255, 109, 44, 0.25);
+        }
+
+        .qa-btn.primary:hover {
+            opacity: 0.92;
+            transform: translateY(-1px);
+        }
+
+        .qa-btn.secondary {
+            background: #f8fafc;
+            color: var(--navy);
+            border-color: var(--line);
+        }
+
+        .qa-btn.secondary:hover {
+            background: #eef3f8;
+            border-color: #cbd9e6;
+        }
+
+        /* ===== PROFILE CARD (standalone, fully visible on right) ===== */
+        .profile-card {
+            border-radius: 28px;
+            overflow: hidden;
+            background: white;
+            border: 1px solid var(--line);
+            box-shadow: 0 12px 28px -8px rgba(15, 43, 61, 0.1);
+            transition: transform 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .profile-header {
+            background: linear-gradient(125deg, var(--navy) 0%, #0f2b3d 100%);
+            padding: 2.2rem 1.8rem 1.8rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            width: 260px;
+            height: 260px;
+            background: radial-gradient(circle, rgba(255, 140, 66, 0.2) 0%, transparent 70%);
+            top: -70px;
+            right: -60px;
+            pointer-events: none;
+        }
+
+        .profile-avatar-lg {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2.5px solid rgba(255, 255, 255, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: var(--accent);
+            margin: 0 auto 1rem;
+            letter-spacing: -1px;
+            backdrop-filter: blur(2px);
+        }
+
+        .profile-name {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: white;
+            letter-spacing: -0.2px;
+        }
+
+        .profile-role {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 6px;
+        }
+
+        .profile-body {
+            padding: 1.4rem 1.6rem 1.8rem;
+            background: white;
+            flex: 1;
+        }
+
+        .profile-field {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px dashed var(--line);
+        }
+
+        .profile-field:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .pf-icon {
+            width: 44px;
+            height: 44px;
+            background: #f1f5f9;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .pf-label {
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: #8b9ab0;
+        }
+
+        .pf-value {
+            font-size: 1.18rem;
+            font-weight: 600;
+            color: var(--ink);
+            word-break: break-word;
+            margin-top: 2px;
+        }
+
+        /* responsive: on narrow screens, stack columns so profile stands out */
+        @media (max-width: 950px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .right-column {
+                position: static;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .app-wrapper {
+                padding: 0 1rem 2rem 1rem;
+            }
+
+            .navbar .container {
+                flex-wrap: wrap;
+                height: auto;
+                padding: 0.8rem 0;
+                gap: 0.6rem;
+            }
+
+            .stats-grid {
+                gap: 0.7rem;
+            }
+
+            .stat-card {
+                padding: 0.9rem;
+            }
+
+            .stat-value {
+                font-size: 1.4rem;
+            }
+
+            .section-head {
+                padding: 1rem 1.2rem;
+            }
+
+            .booking-row {
+                padding: 0.8rem 1.2rem;
+            }
+        }
+
+        /* subtle hover */
+        .profile-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 28px -12px rgba(0, 0, 0, 0.12);
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR – full-width bar across the top -->
+<nav class="navbar">
+    <div class="container">
+        <div class="logo">
+            <i class="fas fa-square-parking"></i> ParkFinder NG
+        </div>
+        <div class="nav-links">
+            <a href="/parking/search/" class="nav-link"><i class="fas fa-magnifying-glass"></i> Find Parking</a>
+            <a href="/parking/bookings/" class="nav-link"><i class="fas fa-calendar-check"></i> My Bookings</a>
+            <a href="/analytics/trends/" class="nav-link"><i class="fas fa-chart-line"></i> Trends</a>
+            {% if request.user.role == 'admin' %}
+            <a href="/parking/manage/" class="nav-link"><i class="fas fa-screwdriver-wrench"></i> Manage</a>
+            {% endif %}
+            <a href="/auth/logout/" class="nav-btn"><i class="fas fa-right-from-bracket"></i> Logout</a>
+        </div>
+    </div>
+</nav>
+
+<div class="app-wrapper">
+    <div class="dashboard-grid">
+        <div class="left-column">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon total"><i class="fas fa-layer-group"></i></div>
+                    <div class="stat-body">
+                        <div class="stat-value">{{ stats.total }}</div>
+                        <div class="stat-label">Total Bookings</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon active"><i class="fas fa-circle-check"></i></div>
+                    <div class="stat-body">
+                        <div class="stat-value">{{ stats.confirmed }}</div>
+                        <div class="stat-label">Active</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon done"><i class="fas fa-flag-checkered"></i></div>
+                    <div class="stat-body">
+                        <div class="stat-value">{{ stats.completed }}</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon cancelled"><i class="fas fa-xmark-circle"></i></div>
+                    <div class="stat-body">
+                        <div class="stat-value">{{ stats.cancelled }}</div>
+                        <div class="stat-label">Cancelled</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card fill">
+                <div class="section-head">
+                    <h3><i class="fas fa-clock-rotate-left"></i> Recent Bookings</h3>
+                    <a href="{% url 'my_bookings' %}" class="section-link">View all &rsaquo;</a>
+                </div>
+                {% if recent_bookings %}
+                <div class="booking-list">
+                    {% for b in recent_bookings %}
+                    <div class="booking-row">
+                        <span class="bk-dot {{ b.status }}"></span>
+                        <div class="bk-info">
+                            <div class="bk-lot">{{ b.lot_name }} — Slot {{ b.slot_number }}</div>
+                            <div class="bk-meta">{{ b.booked_at|date:"D, d M Y \a\t g:i A" }}</div>
+                        </div>
+                        <span class="bk-badge {{ b.status }}">{{ b.status }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-calendar-xmark"></i>
+                    <p>No bookings yet. Find a parking lot to get started.</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Quick Actions Card -->
+            <div class="section-card">
+                <div class="section-head">
+                    <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                </div>
+                <div class="quick-actions">
+                    <a href="{% url 'search' %}" class="qa-btn primary"><i class="fas fa-magnifying-glass"></i> Find a Parking Lot</a>
+                    <a href="{% url 'my_bookings' %}" class="qa-btn secondary"><i class="fas fa-calendar-check"></i> View All Bookings</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-column">
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="profile-avatar-lg">{{ request.user.first_name|first|upper }}{{ request.user.last_name|first|upper }}</div>
+                    <div class="profile-name">{{ request.user.get_full_name }}</div>
+                    <div class="profile-role">{{ request.user.role|default:"Driver" }}</div>
+                </div>
+                <div class="profile-body">
+                    <div class="profile-field">
+                        <div class="pf-icon"><i class="fas fa-envelope"></i></div>
+                        <div class="pf-body">
+                            <div class="pf-label">Email</div>
+                            <div class="pf-value">{{ request.user.email|default:"—" }}</div>
+                        </div>
+                    </div>
+                    <div class="profile-field">
+                        <div class="pf-icon"><i class="fas fa-phone"></i></div>
+                        <div class="pf-body">
+                            <div class="pf-label">Phone</div>
+                            <div class="pf-value">{{ request.user.phone_number|default:"—" }}</div>
+                        </div>
+                    </div>
+                    <div class="profile-field">
+                        <div class="pf-icon"><i class="fas fa-car"></i></div>
+                        <div class="pf-body">
+                            <div class="pf-label">Plate Number</div>
+                            <div class="pf-value">{{ request.user.plate_number|default:"—" }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

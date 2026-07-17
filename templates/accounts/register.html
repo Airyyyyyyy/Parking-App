@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>ParkFinder NG | Register</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --navy: #0f2b3d;
+            --navy-deep: #0b1f2e;
+            --accent: #ff8c42;
+            --accent-grad: linear-gradient(95deg, #ff9a3c 0%, #ff6d2c 100%);
+            --ink: #1e293b;
+            --muted: #64748b;
+            --line: #e6ecf3;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background:
+                radial-gradient(1200px 600px at 100% 0%, #eaf1f9 0%, transparent 55%),
+                radial-gradient(900px 500px at 0% 100%, #eef3f8 0%, transparent 50%),
+                #f1f5fa;
+            color: var(--ink);
+            line-height: 1.55;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a { text-decoration: none; }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1.5rem;
+        }
+
+        .auth-shell {
+            width: 100%;
+            max-width: 1200px;
+            min-height: 600px;
+            display: grid;
+            grid-template-columns: 1fr 1.05fr;
+            background: #ffffff;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow:
+                0 30px 60px -20px rgba(15, 43, 61, 0.28),
+                0 8px 24px -12px rgba(15, 43, 61, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        .brand-panel {
+            position: relative;
+            background:
+                radial-gradient(600px 300px at -20% -10%, rgba(255, 140, 66, 0.28) 0%, transparent 60%),
+                linear-gradient(160deg, var(--navy) 0%, var(--navy-deep) 100%);
+            color: #fff;
+            padding: 3rem 2.8rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+        }
+        .brand-top {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            font-size: 2.4rem;
+            letter-spacing: -0.3px;
+        }
+        .brand-top i { color: var(--accent); }
+
+        .brand-hero {
+            position: relative;
+            z-index: 1;
+        }
+        .brand-hero h1 {
+            font-size: 1.9rem;
+            font-weight: 800;
+            line-height: 1.2;
+            letter-spacing: -0.6px;
+            margin-bottom: 0.7rem;
+        }
+        .brand-hero p {
+            color: rgba(255, 255, 255, 0.72);
+            font-size: 1.6rem;
+            max-width: 32ch;
+        }
+
+        .brand-features {
+            position: relative;
+            z-index: 1;
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+        }
+        .brand-features li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.88);
+            font-weight: 500;
+        }
+        .brand-features li .fi {
+            width: 34px;
+            height: 34px;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.10);
+            color: var(--accent);
+            font-size: 0.85rem;
+        }
+
+        /* ---------- Form panel ---------- */
+        .form-panel {
+            padding: 2.6rem 2.8rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .form-head {
+            margin-bottom: 1.5rem;
+        }
+        .form-head h2 {
+            font-size: 2.7rem;
+            font-weight: 800;
+            color: var(--navy);
+            letter-spacing: -0.4px;
+        }
+        .form-head p {
+            color: var(--muted);
+            font-size: 1.3rem;
+            margin-top: 0.35rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.05rem;
+        }
+        .form-group label {
+            display: block;
+            font-size: 1.3rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-bottom: 0.45rem;
+            color: #475569;
+        }
+        .form-group label i {
+            margin-right: 6px;
+            font-size: 1rem;
+            color: var(--accent);
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+        .input-wrap > i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 0.85rem;
+            pointer-events: none;
+            transition: color 0.2s;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 0.78rem 1rem 0.78rem 2.5rem;
+            border: 1.5px solid var(--line);
+            border-radius: 14px;
+            font-size: 1.3rem;
+            font-family: inherit;
+            transition: all 0.2s ease;
+            background: #fbfcfe;
+            color: #0f172a;
+            font-weight: 500;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(255, 140, 66, 0.14);
+        }
+        .input-wrap:focus-within > i {
+            color: var(--accent);
+        }
+        input::placeholder {
+            color: #aab6c6;
+            font-weight: 400;
+            font-size: 1rem;
+        }
+
+        /* show/hide password toggle */
+        .input-wrap.has-toggle input {
+            padding-right: 2.7rem;
+        }
+        .toggle-pw {
+            position: absolute;
+            right: 0.6rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #94a3b8;
+            font-size: 1.4rem;
+            padding: 6px;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+        .toggle-pw:hover { color: var(--accent); }
+
+        .password-hint {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #8a98a8;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .password-hint i { color: var(--accent); }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0.9rem 1.6rem;
+            background: var(--accent-grad);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.22s ease;
+            letter-spacing: 0.2px;
+            box-shadow: 0 8px 18px -6px rgba(255, 109, 44, 0.45);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 24px -8px rgba(255, 109, 44, 0.5);
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+        .btn-full {
+            width: 100%;
+            margin-top: 0.6rem;
+        }
+        .btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.9;
+            transform: none;
+        }
+        .spinner {
+            width: 17px;
+            height: 17px;
+            border: 2.5px solid rgba(255, 255, 255, 0.45);
+            border-top-color: #fff;
+            border-radius: 50%;
+            display: inline-block;
+            animation: spin 0.6s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ---------- Toast notifications ---------- */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .toast {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            min-width: 270px;
+            max-width: 360px;
+            padding: 0.9rem 1.1rem;
+            border-radius: 14px;
+            background: #fff;
+            color: var(--ink);
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 14px 34px -10px rgba(15, 43, 61, 0.3);
+            transform: translateX(130%);
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2), opacity 0.4s;
+        }
+        .toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        .toast .t-icon { font-size: 1.15rem; flex-shrink: 0; }
+        .toast-error   { border-left-color: #ef4444; }
+        .toast-error   .t-icon { color: #ef4444; }
+        .toast-success { border-left-color: #22c55e; }
+        .toast-success .t-icon { color: #22c55e; }
+        .toast-info    { border-left-color: var(--accent); }
+        .toast-info    .t-icon { color: var(--accent); }
+
+        @media (max-width: 480px) {
+            .toast-container { top: 14px; left: 14px; right: 14px; }
+            .toast { min-width: 0; max-width: none; }
+        }
+
+        .alert {
+            padding: 0.85rem 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.2rem;
+            font-size: 0.88rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-left: 4px solid transparent;
+        }
+        .alert-error {
+            background: #fff5f3;
+            color: #c2410c;
+            border-left-color: #ef6c44;
+        }
+        .alert-success {
+            background: #effaf5;
+            color: #0c6b4b;
+            border-left-color: #2b9348;
+        }
+        .alert i { font-size: 0.95rem; }
+
+        .auth-link {
+            text-align: center;
+            margin-top: 1.4rem;
+            font-size: 1.1rem;
+            color: #5b6b7e;
+            border-top: 1px solid #eef2f6;
+            padding-top: 1.3rem;
+        }
+        .auth-link a {
+            color: #ff6d2c;
+            font-weight: 700;
+            transition: color 0.2s;
+            margin-left: 4px;
+        }
+        .auth-link a:hover {
+            color: #e65100;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 1.4rem;
+            font-size: 1.1rem;
+            color: #8a98a8;
+        }
+
+        /* ---------- Responsive ---------- */
+        @media (max-width: 860px) {
+            .navbar {
+                display: block;
+            }
+            .auth-shell {
+                grid-template-columns: 1fr;
+                max-width: 500px;
+            }
+            .brand-panel {
+                display: none;
+            }
+            .form-panel {
+                padding: 2.4rem 2rem;
+            }
+        }
+        @media (max-width: 480px) {
+            .form-panel { padding: 2rem 1.4rem; }
+            .form-row { grid-template-columns: 1fr; gap: 0; }
+            .navbar .container { padding: 0 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <div class="main-content">
+        <div class="auth-shell">
+            <!-- Brand panel -->
+            <aside class="brand-panel">
+                <div class="brand-top">
+                    <i class="fas fa-square-parking"></i> ParkFinder NG
+                </div>
+
+                <div class="brand-hero">
+                    <h1>Join the smarter way to park on campus.</h1>
+                    <p>Create your account to reserve slots and skip the search across Chrisland University.</p>
+                </div>
+
+                <ul class="brand-features">
+                    <li><span class="fi"><i class="fas fa-bolt"></i></span> Real-time slot availability</li>
+                    <li><span class="fi"><i class="fas fa-calendar-check"></i></span> Reserve & manage bookings</li>
+                    <li><span class="fi"><i class="fas fa-chart-line"></i></span> Smart busy-hour insights</li>
+                </ul>
+            </aside>
+
+            <!-- Form panel -->
+            <div class="form-panel">
+                <div class="form-head">
+                    <h2>Create your account</h2>
+                    <p>Join Chrisland University campus parking.</p>
+                </div>
+
+                {% if error %}
+                <div id="serverMessage" data-type="error" hidden>{{ error }}</div>
+                {% endif %}
+
+                <form method="post" action="{% url 'register' %}">
+                    {% csrf_token %}
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="first_name"><i class="fas fa-user"></i> First Name</label>
+                            <div class="input-wrap">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="first_name" name="first_name"
+                                       value="{{ form.first_name }}"
+                                       placeholder="John" required autofocus>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="last_name"><i class="fas fa-user"></i> Last Name</label>
+                            <div class="input-wrap">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="last_name" name="last_name"
+                                       value="{{ form.last_name }}"
+                                       placeholder="Doe" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email"><i class="fas fa-envelope"></i> Email</label>
+                        <div class="input-wrap">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="email" name="email"
+                                   value="{{ form.email }}"
+                                   placeholder="your@email.com" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone_number"><i class="fas fa-phone-alt"></i> Phone Number</label>
+                        <div class="input-wrap">
+                            <i class="fas fa-phone-alt"></i>
+                            <input type="tel" id="phone_number" name="phone_number"
+                                   value="{{ form.phone_number }}"
+                                   placeholder="+234 800 000 0000" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="plate_number"><i class="fas fa-car"></i> Plate Number</label>
+                        <div class="input-wrap">
+                            <i class="fas fa-car"></i>
+                            <input type="text" id="plate_number" name="plate_number"
+                                   value="{{ form.plate_number }}"
+                                   placeholder="e.g. ABC-123-XY" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="password"><i class="fas fa-lock"></i> Password</label>
+                            <div class="input-wrap has-toggle">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="password" name="password"
+                                       placeholder="At least 8 characters" required minlength="8">
+                                <button type="button" class="toggle-pw" aria-label="Show password"><i class="fas fa-eye"></i></button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="password2"><i class="fas fa-check-circle"></i> Confirm</label>
+                            <div class="input-wrap has-toggle">
+                                <i class="fas fa-check-circle"></i>
+                                <input type="password" id="password2" name="password2"
+                                       placeholder="Repeat password" required>
+                                <button type="button" class="toggle-pw" aria-label="Show password"><i class="fas fa-eye"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="password-hint"><i class="fas fa-info-circle"></i> Use 8+ characters, mix of letters & numbers</div>
+
+                    <button type="submit" class="btn btn-full">
+                        <i class="fas fa-user-check"></i> Create Account
+                    </button>
+                </form>
+
+                <p class="auth-link">
+                    Already have an account? <a href="{% url 'login' %}">Log in here</a>
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>© 2025 ParkFinder NG — Chrisland University, Owode Egba, Ogun State.</p>
+    </footer>
+
+    <script>
+        (function() {
+            function showToast(message, type) {
+                if (!message) return;
+                type = type || 'info';
+                const container = document.getElementById('toastContainer');
+                if (!container) return;
+                const icons = { error: 'fa-exclamation-circle', success: 'fa-check-circle', info: 'fa-info-circle' };
+
+                const toast = document.createElement('div');
+                toast.className = 'toast toast-' + type;
+
+                const icon = document.createElement('i');
+                icon.className = 'fas ' + (icons[type] || icons.info) + ' t-icon';
+
+                const span = document.createElement('span');
+                span.textContent = message;
+
+                toast.appendChild(icon);
+                toast.appendChild(span);
+                container.appendChild(toast);
+
+                requestAnimationFrame(function() { toast.classList.add('show'); });
+                setTimeout(function() {
+                    toast.classList.remove('show');
+                    setTimeout(function() { toast.remove(); }, 400);
+                }, 4500);
+            }
+
+            const sm = document.getElementById('serverMessage');
+            if (sm) {
+                showToast(sm.textContent.trim(), sm.dataset.type || 'error');
+            }
+
+            // ---------- Show / hide password ----------
+            document.querySelectorAll('.toggle-pw').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    const input = btn.parentElement.querySelector('input');
+                    const icon = btn.querySelector('i');
+                    if (!input) return;
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        icon.className = 'fas fa-eye-slash';
+                        btn.setAttribute('aria-label', 'Hide password');
+                    } else {
+                        input.type = 'password';
+                        icon.className = 'fas fa-eye';
+                        btn.setAttribute('aria-label', 'Show password');
+                    }
+                });
+            });
+
+            const password = document.getElementById('password');
+            const confirm = document.getElementById('password2');
+
+            if (password && confirm) {
+                const checkMatch = function() {
+                    if (confirm.value.length > 0 && password.value !== confirm.value) {
+                        confirm.setCustomValidity("Passwords do not match");
+                        confirm.style.borderColor = "#ef6c44";
+                    } else {
+                        confirm.setCustomValidity("");
+                        confirm.style.borderColor = "";
+                    }
+                };
+                password.addEventListener('input', checkMatch);
+                confirm.addEventListener('input', checkMatch);
+            }
+
+            const form = document.querySelector('form');
+            const submitBtn = form ? form.querySelector('button[type="submit"]') : null;
+            if (form && submitBtn) {
+                form.addEventListener('submit', function() {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<span class="spinner"></span> Creating account…';
+                });
+            }
+        })();
+    </script>
+</body>
+</html>
